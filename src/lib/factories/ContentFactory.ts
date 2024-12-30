@@ -1,27 +1,29 @@
-import { ContentRegistry } from "$lib/registries/ContentRegistry";
-
-interface CreateComponentOptions<TProps> {
-  type: string;
-  target: HTMLElement;
-  props: TProps;
-}
+import { contentRegistry } from "$lib/registries/ContentRegistry";
 
 export class ComponentFactory {
-  static createComponent<TProps>({
+  static createComponent({
     type,
     target,
     props,
-  }: CreateComponentOptions<TProps>) {
-    const ContentConstructor =
-      ContentRegistry.getContentConstructor<TProps>(type);
-
-    if (!ContentConstructor) {
-      throw new Error(`Component of type "${type}" is not registered.`);
+  }: {
+    type: string;
+    target: HTMLElement;
+    props: Record<string, any>; // Можно уточнить тип, если известен формат данных
+  }): HTMLElement {
+    // Получаем конструктор компонента
+    const Component = contentRegistry.getContentConstructor(type);
+    
+    if (!Component) {
+      throw new Error(`Component type "${type}" is not registered`);
     }
 
-    return new ContentConstructor({
+    // Создаем новый экземпляр компонента
+    new Component({
       target,
       props,
     });
+
+    // Возвращаем контейнер с компонентом
+    return target;
   }
 }

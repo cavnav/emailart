@@ -1,5 +1,3 @@
-import { ContentRegistry } from '../factories/ContentRegistry';
-
 export class ImageContent {
   type: string;
   value: string;
@@ -9,6 +7,3 @@ export class ImageContent {
     this.value = value;
   }
 }
-
-// Регистрация типа контента
-ContentRegistry.registerContent('image', ImageContent);

@@ -1,67 +1,69 @@
 <script lang="ts">
-    import { ContentFactory } from "../types/ContentFactory";
-    import { ContentRegistry } from "../types/ContentRegistry";
+  import { contentRegistry } from '$lib/registries/ContentRegistry';
 
+  export let contentList: { type: string; props: { content: string }; id: number }[] = [];
+  export let selectedType: string = '';
+  export let contentTypes: { type: string; label: string }[] = [];
+  export let deleteContent: (index: number) => void;
 
-  // Массив контента
-  let contentList: any[] = [];
-
-  // Тип контента, выбранный пользователем
-  let selectedType: string = Object.keys(ContentRegistry)[0]; // по умолчанию первый тип
-
-  // Функция для добавления контента
-  const addContent = (type: string) => {
-    const content = ContentFactory.createContent(type, `Sample ${type} content`);
-    if (content) {
-      contentList.push(content);
+  // Функция для создания компонента
+  const createComponent = (type: string, props: any) => {
+    try {
+      const Component = contentRegistry.getContentConstructor(type);
+      if (!Component) {
+        throw new Error(`Component type "${type}" is not registered`);
+      }
+      return Component;
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "Unknown error occurred");
+      return null;
     }
   };
 
-  // Функция для удаления контента
-  const deleteContent = (index: number) => {
-    contentList.splice(index, 1);
+  // Обработчик изменения типа контента
+  const handleTypeChange = (newType: string) => {
+    selectedType = newType; // Меняем только выбранный тип для новых элементов
   };
 
-  // Доступные типы контента
-  const contentTypes = Object.keys(contentList);
+  // Функция для добавления нового контента
+  const addContent = () => {
+    if (!selectedType) {
+      console.error("No selected type to add content!");
+      return;
+    }
+
+    // Добавляем новый элемент с выбранным типом
+    contentList = [
+      ...contentList,
+      {
+        type: selectedType,
+        props: { content: `Sample ${selectedType} content` },
+        id: Date.now(), // Генерируем уникальный id для контента
+      },
+    ];
+  };
 </script>
 
 <div>
-  <!-- Выбор типа контента -->
+  <h2>Content Editor</h2>
+
   <label for="contentType">Select Content Type:</label>
-  <select id="contentType" bind:value={selectedType}>
-    {#each contentTypes as type}
-      <option value={type}>{type}</option>
+  <select id="contentType" bind:value={selectedType} on:change={(e) => handleTypeChange(e.target.value)}>
+    {#each contentTypes as { type, label }}
+      <option value={type}>{label}</option>
     {/each}
   </select>
 
-  <!-- Кнопка добавления контента -->
-  <button on:click={() => addContent(selectedType)}>Add Content</button>
-
-  <!-- Список контента -->
   <ul>
-    {#each contentList as content, index}
+    {#each contentList as { type, props }, index}
       <li>
-        {content.value}
-        <!-- Кнопка удаления контента -->
+        {#if createComponent(type, props)}
+          <svelte:component this={createComponent(type, props)} key={type} {...props} />
+        {/if}
         <button on:click={() => deleteContent(index)}>Delete</button>
       </li>
     {/each}
   </ul>
+
+  <button on:click={addContent}>Add Content</button>
 </div>
-
-<style>
-  button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-
-  select {
-    margin-right: 10px;
-  }
-
-  li {
-    margin-bottom: 10px;
-  }
-</style>
