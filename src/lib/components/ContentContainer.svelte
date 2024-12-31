@@ -1,11 +1,11 @@
 <script lang="ts">
   import { contentRegistry } from '$lib/registries/ContentRegistry';
-
   export let contentList: { type: string; props: { content: string }; id: number }[] = [];
   export let selectedType: string = '';
-  export let contentTypes: { type: string; label: string }[] = [];
+  export let contentTypes: string[] = [];
   export let deleteContent: (index: number) => void;
 
+  $:  console.log('contentTypes', contentTypes)
   // Функция для создания компонента
   const createComponent = (type: string, props: any) => {
     try {
@@ -42,6 +42,8 @@
       },
     ];
   };
+
+  $: console.log(contentTypes)
 </script>
 
 <div>
@@ -49,8 +51,8 @@
 
   <label for="contentType">Select Content Type:</label>
   <select id="contentType" bind:value={selectedType} on:change={(e) => handleTypeChange(e.target.value)}>
-    {#each contentTypes as { type, label }}
-      <option value={type}>{label}</option>
+    {#each contentTypes as type}
+      <option value={type}>{type}</option>
     {/each}
   </select>
 

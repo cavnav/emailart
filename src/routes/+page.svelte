@@ -6,26 +6,20 @@
 
   // Тип контента, выбранный пользователем
   let selectedType: string = ''; // Пустое значение по умолчанию
-
+  let contentTypes: string[] = []
   // Список контента
   let contentList: { type: string; props: { content: string }; id: number }[] = [];
 
-  // Доступные типы контента
-  let contentTypes: { type: string; label: string }[] = [];
 
   // Инициализация типов контента
   onMount(() => {
-    initializeContentTypes(); // Инициализация типов (например, загрузка данных)
-    contentTypes = contentRegistry.getAllContentTypes().map(type => ({
-      type,
-      label: type.charAt(0).toUpperCase() + type.slice(1) // Преобразуем тип в читаемое название
-    }));
-
+    initializeContentTypes();
+    contentTypes = contentRegistry.getAllContentTypes(); 
     console.log(contentTypes); // Проверка, что данные есть
 
     // Устанавливаем первый тип по умолчанию, если типы существуют
     if (contentTypes.length > 0) {
-      selectedType = contentTypes[0].type; // Устанавливаем первый тип по умолчанию
+      selectedType = contentTypes[0] // Устанавливаем первый тип по умолчанию
     } else {
       console.error("No content types available!");
     }
@@ -66,11 +60,13 @@
   <ContentContainer {contentList} {selectedType} {contentTypes} {deleteContent} />
 
   <!-- Кнопка добавления контента -->
-  <button on:click={() => addContent(selectedType)}>Add Content</button>
+  <button on:click={() => addContent(selectedType)}>Add</button>
 
   <!-- Кнопка удаления всего контента -->
   <button on:click={deleteAllContent}>Delete All Content</button>
 </main>
+
+
 
 <style>
   main {

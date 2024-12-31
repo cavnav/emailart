@@ -1,17 +1,18 @@
+import type { SvelteComponent } from "svelte";
 
+// Типизация объекта contentRegistry
 export const contentRegistry = {
-  components: new Map<string, any>(),
+  components: {} as Record<string, typeof SvelteComponent>, // Тип компонентов — конструкторы Svelte
 
-  registerContent(type: string, component: any) {
-    this.components.set(type, component);
+  registerContent(type: string, component: typeof SvelteComponent) {
+    this.components[type] = component;
   },
 
-  getContentConstructor(type: string) {
-    return this.components.get(type);
+  getContentConstructor(type: string): typeof SvelteComponent | undefined {
+    return this.components[type];
   },
 
-  getAllContentTypes() {
-    return Array.from(this.components.keys());
+  getAllContentTypes(): string[] {
+    return Object.keys(this.components);
   },
 };
-
