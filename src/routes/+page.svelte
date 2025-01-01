@@ -58,12 +58,6 @@
 
   <!-- Компонент ContentContainer -->
   <ContentContainer {contentList} {selectedType} {contentTypes} {deleteContent} />
-
-  <!-- Кнопка добавления контента -->
-  <button on:click={() => addContent(selectedType)}>Add</button>
-
-  <!-- Кнопка удаления всего контента -->
-  <button on:click={deleteAllContent}>Delete All Content</button>
 </main>
 
 
@@ -76,11 +70,5 @@
 
   h1 {
     color: #333;
-  }
-
-  button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
   }
 </style>
