@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  export let content: string | null = null; // URL изображения
+  let content: string | undefined
 
   // Обработчик выбора изображения
-  const handleImageSelect = (event: Event) => {
+  const onSelect = (event: Event) => {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
@@ -30,6 +30,13 @@
     }
   };
 
+  let fileInput: HTMLInputElement | null = null;
+
+  // Триггер нажатия на скрытый input
+  const triggerFileInput = () => {
+    fileInput?.click();
+  };
+
   onMount(() => {
     // Добавляем слушатель на событие вставки при монтировании компонента
     window.addEventListener('paste', handlePaste);
@@ -48,16 +55,18 @@
     <span>Choose or paste an image</span>
   {/if}
   
-  <label for="imageInput" class="image-label">
-    {#if !content}
+  <button on:click={triggerFileInput} class="select-button">
+    {#if content}
+      Change Image
+    {:else}
       Select Image
     {/if}
-  </label>
+  </button>
   <input
-    id="imageInput"
+    bind:this={fileInput}
     type="file"
     accept="image/*"
-    on:change={handleImageSelect}
+    on:change={onSelect}
     class="image-input"
   />
 </div>
@@ -68,14 +77,21 @@
     position: relative;
   }
 
-  .image-label {
+  .select-button {
     display: inline-block;
     cursor: pointer;
-    padding: 10px;
+    padding: 10px 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #f9f9f9;
+    background-color: #007BFF;
+    color: #fff;
+    font-size: 14px;
     margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  .select-button:hover {
+    background-color: #0056b3;
   }
 
   .image-input {

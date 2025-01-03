@@ -5,8 +5,11 @@
   const handleInput = (event: Event) => {
     const target = event.target as HTMLTextAreaElement;
     content = target.value;
-  };
+  }
 </script>
+
+
+
 
 <div class="text-editor">
   <textarea
@@ -16,11 +19,11 @@
   ></textarea>
 </div>
 
+
 <style>
   .text-editor {
     display: flex;
-    flex-direction: column;
-    margin: 10px 0;
+    width: 100%;
   }
 
   textarea {
